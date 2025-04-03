@@ -3,18 +3,18 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-// Collection of high-quality stock images from Unsplash
+// Collection of local stock images
 const stockImages = {
-  profile: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
-  company: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=400&fit=crop",
-  office: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=400&fit=crop",
-  meeting: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&h=400&fit=crop",
-  workspace: "https://images.unsplash.com/photo-1497215842964-222b430dc094?w=800&h=400&fit=crop",
-  team: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=400&fit=crop",
-  success: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=400&fit=crop",
-  collaboration: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&h=400&fit=crop",
-  technology: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=400&fit=crop",
-  default: "https://images.unsplash.com/photo-1579547945413-497e1b99dac0?w=800&h=400&fit=crop",
+  profile: "/images/profile.jpg",
+  company: "/images/company.jpg",
+  office: "/images/office.jpg",
+  meeting: "/images/meeting.jpg",
+  workspace: "/images/workspace.jpg",
+  team: "/images/team.jpg",
+  success: "/images/success.jpg",
+  collaboration: "/images/collaboration.jpg",
+  technology: "/images/technology.jpg",
+  default: "/images/default.jpg",
 } as const;
 
 interface StockImageProps {
@@ -34,10 +34,13 @@ export function StockImage({
   className,
   priority = false,
 }: StockImageProps) {
+  // Fallback to a placeholder image if the image doesn't exist
+  const imageSrc = stockImages[type] || "/images/default.jpg";
+  
   return (
     <div className={cn("relative overflow-hidden", className)}>
       <Image
-        src={stockImages[type]}
+        src={imageSrc}
         alt={alt}
         width={width || 800}
         height={height || 400}
