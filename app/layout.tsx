@@ -3,7 +3,7 @@ import './globals.css'
 import { AppNavbar } from './components/app-navbar'
 
 export const metadata: Metadata = {
-  title: 'Activate',
+  title: 'Activate - AI Powered HR Platform',
   description: 'AI-powered HR onboarding platform',
   generator: 'v0.dev',
 }
