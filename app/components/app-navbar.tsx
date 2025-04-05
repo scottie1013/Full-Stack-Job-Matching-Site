@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { LayoutDashboard, ClipboardList, Heart } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { LucideIcon } from "lucide-react"
+import { useEffect, useState } from "react"
 
 // Define types for our navigation items
 interface NavItem {
@@ -15,10 +16,31 @@ interface NavItem {
 
 export function AppNavbar() {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+  
+  // Set mounted to true once component mounts
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   
   // Skip navigation only on onboarding pages
   if (pathname.startsWith('/onboarding')) {
     return null
+  }
+
+  // During first render, return a placeholder to avoid hydration errors
+  if (!mounted) {
+    return (
+      <div className="w-full bg-white/80 backdrop-blur-md border-b fixed top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="text-2xl font-bold text-purple-900 flex items-center gap-2 mr-8">
+              Activate!
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   // Display different navigation based on whether we're on the landing page
