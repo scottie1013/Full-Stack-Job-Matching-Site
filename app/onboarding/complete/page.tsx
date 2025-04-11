@@ -4,8 +4,27 @@ import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle } from "lucide-react"
 import { MainNav } from "@/components/main-nav"
 import { StockImage } from "../../components/stock-image"
+import { useState } from 'react';
 
 export default function OnboardingCompletePage() {
+  const [formData, setFormData] = useState({ name: '', email: '' });
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+    const file = files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('/api/parse-resume', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+    setFormData(data.data);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b">
@@ -16,6 +35,16 @@ export default function OnboardingCompletePage() {
 
       <main className="container max-w-5xl mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold mb-4 text-center">Upload Your Resume</h2>
+            <p className="text-center text-gray-600 mb-6">
+              Upload your resume to autofill your profile information.
+            </p>
+            <div className="flex justify-center mb-8">
+              <input type="file" accept=".pdf" onChange={handleFileUpload} className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" />
+            </div>
+          </div>
+
           <div className="text-center mb-12">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="h-12 w-12 text-green-600" />

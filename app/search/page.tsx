@@ -37,6 +37,10 @@ const mockSearchResults = [
     experience: "10+ years",
     skills: ["Cloud Architecture", "Distributed Systems", "React"],
     availability: "Open to opportunities",
+    alumniNetwork: ["harvard", "google"],
+    industryPreference: "Tech",
+    referralAvailable: true,
+    companySize: "Large"
   },
   {
     id: "2",
@@ -47,6 +51,10 @@ const mockSearchResults = [
     experience: "8 years",
     skills: ["UX/UI Design", "Design Systems", "Figma"],
     availability: "Looking for contract work",
+    alumniNetwork: ["stanford", "meta"],
+    industryPreference: "Tech, E-commerce",
+    referralAvailable: false,
+    companySize: "Startup, Medium"
   },
   {
     id: "3",
@@ -57,6 +65,10 @@ const mockSearchResults = [
     experience: "6 years",
     skills: ["Product Strategy", "Growth", "Analytics"],
     availability: "Actively searching",
+    alumniNetwork: ["mit"],
+    industryPreference: "Tech, Finance",
+    referralAvailable: true,
+    companySize: "Medium"
   },
   {
     id: "4",
@@ -67,6 +79,10 @@ const mockSearchResults = [
     experience: "5 years",
     skills: ["JavaScript", "React", "Node.js", "PostgreSQL"],
     availability: "Open to opportunities",
+    alumniNetwork: ["amazon", "microsoft"],
+    industryPreference: "Finance, Healthcare",
+    referralAvailable: true,
+    companySize: "Any"
   },
 ]
 
@@ -212,6 +228,66 @@ export default function SearchPage() {
               </div>
             </Card>
 
+            <Card className="p-4">
+              <h3 className="font-medium mb-3">Alumni Network</h3>
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <input id="alumni-1" type="checkbox" className="mr-2" />
+                  <label htmlFor="alumni-1" className="text-sm">
+                    Harvard University
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input id="alumni-2" type="checkbox" className="mr-2" />
+                  <label htmlFor="alumni-2" className="text-sm">
+                    Stanford University
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input id="alumni-3" type="checkbox" className="mr-2" />
+                  <label htmlFor="alumni-3" className="text-sm">
+                    MIT
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input id="alumni-4" type="checkbox" className="mr-2" />
+                  <label htmlFor="alumni-4" className="text-sm">
+                    Google
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input id="alumni-5" type="checkbox" className="mr-2" />
+                  <label htmlFor="alumni-5" className="text-sm">
+                    Amazon
+                  </label>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-4">
+              <h3 className="font-medium mb-3">Referral Available</h3>
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <input id="ref-yes" type="radio" name="referral" className="mr-2" />
+                  <label htmlFor="ref-yes" className="text-sm">
+                    Yes
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input id="ref-no" type="radio" name="referral" className="mr-2" />
+                  <label htmlFor="ref-no" className="text-sm">
+                    No
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input id="ref-any" type="radio" name="referral" className="mr-2" defaultChecked />
+                  <label htmlFor="ref-any" className="text-sm">
+                    Any
+                  </label>
+                </div>
+              </div>
+            </Card>
+
             <Button variant="outline" className="w-full">
               <Filter className="h-4 w-4 mr-2" />
               Apply Filters
@@ -252,39 +328,65 @@ export default function SearchPage() {
                           <p className="text-gray-600">
                             {result.position} at {result.company}
                           </p>
+                          <div className="flex items-center mt-1 text-sm text-gray-500">
+                            <MapPin className="h-3 w-3 mr-1" />
+                            {result.location}
+                          </div>
                         </div>
-                        <Button 
+                        <Button
                           onClick={() => handleViewProfile(result.id)}
                         >
-                          View
+                          View Profile
                         </Button>
                       </div>
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        <div className="flex items-center text-xs text-gray-500">
-                          <MapPin className="h-3 w-3 mr-1" />
-                          {result.location}
+                      
+                      <div className="mt-3">
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {result.skills.map((skill) => (
+                            <Badge key={skill} variant="secondary" className="text-xs">
+                              {skill}
+                            </Badge>
+                          ))}
                         </div>
-                        <div className="flex items-center text-xs text-gray-500">
-                          <Briefcase className="h-3 w-3 mr-1" />
-                          {result.experience}
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 mt-3 text-sm">
+                          <div className="flex items-center text-gray-600">
+                            <Briefcase className="h-3 w-3 mr-1" />
+                            <span>Experience: {result.experience}</span>
+                          </div>
+                          <div className="flex items-center text-gray-600">
+                            <Check className="h-3 w-3 mr-1" />
+                            <span>Availability: {result.availability}</span>
+                          </div>
+                          
+                          {result.alumniNetwork && result.alumniNetwork.length > 0 && (
+                            <div className="flex items-center text-gray-600">
+                              <Star className="h-3 w-3 mr-1" />
+                              <span>Alumni: {result.alumniNetwork.join(', ')}</span>
+                            </div>
+                          )}
+                          
+                          {result.industryPreference && (
+                            <div className="flex items-center text-gray-600">
+                              <Filter className="h-3 w-3 mr-1" />
+                              <span>Industries: {result.industryPreference}</span>
+                            </div>
+                          )}
+                          
+                          {result.companySize && (
+                            <div className="flex items-center text-gray-600">
+                              <Code className="h-3 w-3 mr-1" />
+                              <span>Preferred company size: {result.companySize}</span>
+                            </div>
+                          )}
+                          
+                          {result.referralAvailable && (
+                            <div className="flex items-center text-emerald-600 font-medium">
+                              <Check className="h-3 w-3 mr-1" />
+                              <span>Referral Available</span>
+                            </div>
+                          )}
                         </div>
-                        <Badge
-                          variant="outline"
-                          className="text-xs bg-green-50 border-green-200 text-green-700"
-                        >
-                          {result.availability}
-                        </Badge>
-                      </div>
-                      <div className="flex flex-wrap gap-1 mt-3">
-                        {result.skills.map((skill, idx) => (
-                          <Badge
-                            key={idx}
-                            variant="secondary"
-                            className="text-xs"
-                          >
-                            {skill}
-                          </Badge>
-                        ))}
                       </div>
                     </div>
                   </div>
