@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ const suggestedSkills = [
   "Agile", "Scrum", "Project Management", "Team Leadership"
 ];
 
-export default function SkillsSelection() {
+function SkillsSelectionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
@@ -175,5 +175,17 @@ export default function SkillsSelection() {
         </Card>
       </div>
     </main>
+  );
+}
+
+export default function SkillsSelection() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto text-center">
+        <p>Loading skills page...</p>
+      </div>
+    </div>}>
+      <SkillsSelectionContent />
+    </Suspense>
   );
 } 
