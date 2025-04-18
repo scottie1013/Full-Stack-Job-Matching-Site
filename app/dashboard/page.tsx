@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
@@ -55,8 +55,8 @@ const messages = [
   { id: 3, from: "David Kim", company: "Apple", message: "Following up on your application for the Data Scientist position.", unread: false, date: "2023-04-17" },
 ];
 
-export default function DashboardPage() {
-  const searchParams = useSearchParams();
+function DashboardContent() {
+  const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState("overview")
 
   // Mock metrics for visualization
@@ -248,29 +248,36 @@ export default function DashboardPage() {
             <CardContent>
               <div className="space-y-4">
                 {appliedCompanies.map((company) => (
-                  <div key={company.id} className="flex items-center justify-between p-4 bg-white border rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className="relative w-10 h-10 rounded-md overflow-hidden">
-                        <Image src={company.logo} alt={company.name} fill className="object-cover" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium">{company.name}</h3>
-                        <p className="text-sm text-gray-500">{company.role}</p>
-                      </div>
+                  <div key={company.id} className="flex items-start border-b pb-4 last:border-0 last:pb-0">
+                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                      <User className="h-6 w-6 text-gray-500" />
                     </div>
-                    <div className="flex items-center">
-                      <Badge 
-                        variant={
-                          company.status === 'Offer' ? 'secondary' : 
-                          company.status === 'Interview' ? 'default' : 
-                          company.status === 'Rejected' ? 'destructive' : 
-                          'outline'
-                        }
-                        className="mr-4"
-                      >
-                        {company.status}
-                      </Badge>
-                      <div className="text-sm text-gray-500">{company.date}</div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-medium text-lg">{company.name}</h3>
+                          <p className="text-sm text-gray-500">{company.role}</p>
+                        </div>
+                        <Badge 
+                          variant={
+                            company.status === 'Accepted' ? 'secondary' : 
+                            company.status === 'Interviewing' ? 'default' : 
+                            company.status === 'Rejected' ? 'destructive' : 
+                            'outline'
+                          }
+                        >
+                          {company.status}
+                        </Badge>
+                      </div>
+                      <div className="mt-2">
+                        <p className="text-sm">{company.date}</p>
+                      </div>
+                      <div className="mt-2 flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Applied {company.date}</span>
+                        <Button variant="ghost" size="sm" className="text-purple-900">
+                          View Application <ChevronRight className="h-4 w-4 ml-1" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -292,17 +299,22 @@ export default function DashboardPage() {
             <CardContent>
               <div className="space-y-4">
                 {recruiterFollowups.map((followup) => (
-                  <div key={followup.id} className="p-4 border rounded-lg">
+                  <div 
+                    key={followup.id} 
+                    className={`p-4 rounded-lg border ${followup.urgent ? 'bg-red-50 border-red-200' : 'bg-white border-gray-200'}`}
+                  >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center">
-                        <div className="relative w-8 h-8 rounded-full bg-gray-200 mr-2 flex items-center justify-center">
-                          <User className="h-4 w-4 text-gray-600" />
+                        <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                          <User className="h-5 w-5 text-gray-600" />
                         </div>
-                        <h3 className="font-medium">{followup.name}</h3>
+                        <div>
+                          <h4 className="font-medium">{followup.name}</h4>
+                          <p className="text-sm text-gray-600 mb-2">{followup.company}</p>
+                        </div>
                       </div>
                       <div className="text-sm text-gray-500">{followup.date}</div>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">{followup.company}</p>
                     <p className="text-sm">{followup.message}</p>
                     <div className="mt-4 flex justify-end">
                       <Link href={`/conversations/${followup.id}`}>
@@ -328,6 +340,14 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div className="p-8">Loading dashboard...</div>}>
+      <DashboardContent />
+    </Suspense>
   )
 }
 
