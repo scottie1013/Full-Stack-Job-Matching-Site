@@ -15,7 +15,18 @@ import {
   Share,
   Star,
   Video,
+  Info,
+  CheckCircle,
+  ArrowRight,
 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 interface Project {
   id: number
@@ -96,6 +107,7 @@ export default function ProfilePage() {
   const [videoRecording, setVideoRecording] = useState(false)
   const [recordingDuration, setRecordingDuration] = useState(0)
   const [message, setMessage] = useState("")
+  const [showQuizPrompt, setShowQuizPrompt] = useState(false)
 
   const handleStartRecording = () => {
     setVideoRecording(true)
@@ -109,7 +121,11 @@ export default function ProfilePage() {
   }
 
   const handleConnectClick = () => {
-    router.push(`/messages/${userId}`)
+    setShowQuizPrompt(true)
+  }
+
+  const handleTakeQuiz = () => {
+    router.push(`/profile/${params.id}/quiz`)
   }
 
   if (!user) {
@@ -144,10 +160,9 @@ export default function ProfilePage() {
                 <p className="text-gray-600 mb-2">{user.position} at {user.company}</p>
                 
                 <Button 
-                  className="w-full mb-3" 
+                  className="w-full bg-purple-900 hover:bg-purple-800 mb-3"
                   onClick={handleConnectClick}
                 >
-                  <MessageSquare className="mr-2 h-4 w-4" />
                   Connect
                 </Button>
                 
@@ -298,6 +313,55 @@ export default function ProfilePage() {
           </Card>
         </div>
       </div>
+
+      {/* Quiz Prompt Dialog */}
+      <Dialog open={showQuizPrompt} onOpenChange={setShowQuizPrompt}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <Info className="h-5 w-5 mr-2 text-blue-500" />
+              Greg has a personalized quiz
+            </DialogTitle>
+            <DialogDescription>
+              Greg has created a short quiz to learn more about candidates before connecting. This helps him provide more personalized guidance and referrals.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-blue-50 p-4 rounded-md border border-blue-100 mb-4">
+            <h4 className="font-medium text-blue-800 mb-2 flex items-center">
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Benefits of taking the quiz:
+            </h4>
+            <ul className="text-sm text-blue-700 space-y-1">
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span>Get personalized advice based on your skills and interests</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span>Increase chances of being referred to relevant roles</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span>Make a stronger impression with context about your experience</span>
+              </li>
+            </ul>
+          </div>
+          <DialogFooter className="flex sm:justify-between">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowQuizPrompt(false)}
+            >
+              Skip for now
+            </Button>
+            <Button 
+              onClick={handleTakeQuiz}
+              className="bg-purple-900 hover:bg-purple-800"
+            >
+              Take Quick Quiz <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

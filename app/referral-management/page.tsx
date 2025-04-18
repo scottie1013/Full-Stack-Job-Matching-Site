@@ -114,7 +114,7 @@ export default function ReferralManagementPage() {
               <Link href="/messages" className="block p-3 bg-white rounded-md border">
                 Messages
               </Link>
-              <Link href="/dashboard" className="block p-3 bg-white rounded-md border">
+              <Link href="/dashboard?tab=request-tracking" className="block p-3 bg-white rounded-md border">
                 Tracking Dashboard
               </Link>
             </nav>

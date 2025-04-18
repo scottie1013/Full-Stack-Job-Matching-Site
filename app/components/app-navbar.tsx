@@ -54,11 +54,6 @@ export function AppNavbar() {
       icon: LayoutDashboard,
     },
     {
-      name: "Request Tracking",
-      href: "/dashboard/tracking",
-      icon: ClipboardList,
-    },
-    {
       name: "Success Stories",
       href: "/success-stories",
       icon: Heart,

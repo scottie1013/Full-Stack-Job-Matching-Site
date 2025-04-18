@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -31,13 +31,45 @@ export default function Preferences() {
     relocationWilling: false,
     travelWilling: false,
   });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check for parsed preferences in session storage
+    const parsedPreferences = sessionStorage.getItem('parsedPreferences');
+    if (parsedPreferences) {
+      try {
+        const parsedData = JSON.parse(parsedPreferences);
+        setPreferences(prevPrefs => ({
+          ...prevPrefs,
+          ...parsedData
+        }));
+        console.log("Preferences loaded from session storage:", parsedData);
+      } catch (e) {
+        console.error("Error parsing preferences from session storage:", e);
+      }
+    }
+    setIsLoading(false);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Save preferences to session storage
+    sessionStorage.setItem('candidatePreferences', JSON.stringify(preferences));
+    
     // In a real app, you'd save this data to your backend
     console.log("Preferences submitted:", preferences);
     router.push("/search");
   };
+
+  if (isLoading) {
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <p>Loading your preferences...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -53,6 +85,7 @@ export default function Preferences() {
               <div className="space-y-2">
                 <Label htmlFor="jobType">Desired Role</Label>
                 <Select
+                  value={preferences.jobType}
                   onValueChange={(value) =>
                     setPreferences({ ...preferences, jobType: value })
                   }
@@ -85,6 +118,7 @@ export default function Preferences() {
               <div className="space-y-2">
                 <Label htmlFor="salary">Expected Salary Range</Label>
                 <Select
+                  value={preferences.salary}
                   onValueChange={(value) =>
                     setPreferences({ ...preferences, salary: value })
                   }
@@ -156,6 +190,7 @@ export default function Preferences() {
               <div className="space-y-2">
                 <Label htmlFor="industry">Preferred Industry</Label>
                 <Select
+                  value={preferences.industry}
                   onValueChange={(value) =>
                     setPreferences({ ...preferences, industry: value })
                   }
@@ -178,6 +213,7 @@ export default function Preferences() {
               <div className="space-y-2">
                 <Label htmlFor="companySize">Preferred Company Size</Label>
                 <Select
+                  value={preferences.companySize}
                   onValueChange={(value) =>
                     setPreferences({ ...preferences, companySize: value })
                   }

@@ -11,40 +11,24 @@ import {
   ChevronRight,
   CreditCard,
   Folder,
-  HeartHandshake,
   Home,
   ListChecks,
-  MessageSquare,
   Search,
   Settings,
   Users,
+  LayoutDashboard,
 } from "lucide-react";
 
 const sidebarItems = [
   {
-    title: "Home",
-    icon: Home,
-    href: "/",
+    title: "Dashboard",
+    icon: LayoutDashboard,
+    href: "/dashboard",
   },
   {
     title: "Search",
     icon: Search,
     href: "/search",
-  },
-  {
-    title: "Messages",
-    icon: MessageSquare,
-    href: "/messages/1",
-  },
-  {
-    title: "Events",
-    icon: Activity,
-    href: "/events",
-  },
-  {
-    title: "Organizations",
-    icon: Building,
-    href: "/organizations",
   },
   {
     title: "Resume",
@@ -57,14 +41,19 @@ const sidebarItems = [
     href: "/candidates",
   },
   {
-    title: "Referrals",
-    icon: HeartHandshake,
-    href: "/referrals",
-  },
-  {
     title: "Applications",
     icon: ListChecks,
     href: "/applications",
+  },
+  {
+    title: "Events",
+    icon: Activity,
+    href: "/events",
+  },
+  {
+    title: "Organizations",
+    icon: Building,
+    href: "/organizations",
   },
   {
     title: "Billing",

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 function CandidateForm() {
   const router = useRouter();
@@ -16,6 +17,9 @@ function CandidateForm() {
     currentRole: "",
     yearsOfExperience: "",
   });
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
     // Check for query parameters when the page loads
@@ -39,10 +43,26 @@ function CandidateForm() {
         yearsOfExperience: yearsOfExperience || '',
       });
     }
+
+    // Check if there's saved data in session storage
+    const savedData = sessionStorage.getItem('candidateBasicInfo');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        setFormData(parsedData);
+        console.log("Form data loaded from session storage");
+      } catch (e) {
+        console.error("Error parsing saved data:", e);
+      }
+    }
   }, [searchParams]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Save form data to session storage
+    sessionStorage.setItem('candidateBasicInfo', JSON.stringify(formData));
+    
     // In a real app, you'd save this data to your backend
     console.log("Form submitted:", formData);
     router.push("/onboarding/candidate/skills");
@@ -55,6 +75,10 @@ function CandidateForm() {
       console.log("No files selected");
       return;
     }
+    
+    setIsUploading(true);
+    setStatusMessage("Parsing your resume...");
+    setUploadStatus('idle');
     
     const file = files[0];
     console.log("File selected:", file.name);
@@ -72,6 +96,9 @@ function CandidateForm() {
       console.log("API Response status:", response.status);
       if (!response.ok) {
         console.error("API response not OK:", response.statusText);
+        setUploadStatus('error');
+        setStatusMessage("Failed to parse resume. Please try again or fill in the form manually.");
+        setIsUploading(false);
         return;
       }
       
@@ -90,12 +117,29 @@ function CandidateForm() {
           yearsOfExperience: data.yearsOfExperience || '',
         });
         
+        // Save the full parsed data (including skills and preferences) to session storage
+        if (data.skills) {
+          sessionStorage.setItem('parsedSkills', JSON.stringify(data.skills));
+        }
+        
+        if (data.preferences) {
+          sessionStorage.setItem('parsedPreferences', JSON.stringify(data.preferences));
+        }
+        
+        setUploadStatus('success');
+        setStatusMessage("Resume parsed successfully! Form has been filled with your information.");
         console.log("Form data updated:", formData);
       } else {
         console.error("Invalid data structure received from API:", data);
+        setUploadStatus('error');
+        setStatusMessage("Unable to extract information from your resume. Please fill in the form manually.");
       }
     } catch (error) {
       console.error("Error in file upload process:", error);
+      setUploadStatus('error');
+      setStatusMessage("An error occurred while processing your resume. Please try again or fill in the form manually.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -107,8 +151,28 @@ function CandidateForm() {
           <p className="text-center text-gray-600 mb-6">
             Upload your resume to autofill your profile information.
           </p>
-          <div className="flex justify-center mb-8">
-            <input type="file" accept=".pdf" onChange={handleFileUpload} className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" />
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-full">
+              <input 
+                type="file" 
+                accept=".pdf,.doc,.docx" 
+                onChange={handleFileUpload} 
+                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" 
+                disabled={isUploading}
+              />
+            </div>
+            {isUploading && (
+              <div className="mt-4 flex items-center">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <p>{statusMessage}</p>
+              </div>
+            )}
+            {!isUploading && uploadStatus === 'success' && (
+              <p className="mt-4 text-green-600">{statusMessage}</p>
+            )}
+            {!isUploading && uploadStatus === 'error' && (
+              <p className="mt-4 text-red-600">{statusMessage}</p>
+            )}
           </div>
         </div>
 

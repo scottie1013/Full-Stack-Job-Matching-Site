@@ -99,7 +99,7 @@ export default function MessagesPage() {
               <Link href="/messages" className="block p-3 bg-gray-100 rounded-md border font-medium">
                 Messages
               </Link>
-              <Link href="/dashboard" className="block p-3 bg-white rounded-md border">
+              <Link href="/dashboard?tab=request-tracking" className="block p-3 bg-white rounded-md border">
                 Tracking Dashboard
               </Link>
             </nav>

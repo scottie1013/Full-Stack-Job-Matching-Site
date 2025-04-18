@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const suggestedSkills = [
@@ -16,8 +16,51 @@ const suggestedSkills = [
 
 export default function SkillsSelection() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [skillInput, setSkillInput] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check for query parameters or sessionStorage data
+    const parsedSkills = sessionStorage.getItem('parsedSkills');
+    
+    if (parsedSkills) {
+      try {
+        const skills = JSON.parse(parsedSkills);
+        if (Array.isArray(skills)) {
+          setSelectedSkills(skills);
+          console.log("Skills loaded from session storage:", skills);
+        }
+      } catch (e) {
+        console.error("Error parsing skills from session storage:", e);
+      }
+    } else {
+      // If no parsed skills in session storage, check if we received them via API
+      const checkForParsedData = async () => {
+        try {
+          const response = await fetch('/api/candidate-data');
+          if (response.ok) {
+            const data = await response.json();
+            if (data.skills && Array.isArray(data.skills)) {
+              setSelectedSkills(data.skills);
+              // Store in session storage for future use
+              sessionStorage.setItem('parsedSkills', JSON.stringify(data.skills));
+              console.log("Skills loaded from API:", data.skills);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching candidate data:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      
+      checkForParsedData();
+    }
+    
+    setIsLoading(false);
+  }, []);
 
   const handleAddSkill = (skill: string) => {
     if (!selectedSkills.includes(skill)) {
@@ -32,10 +75,23 @@ export default function SkillsSelection() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Save selected skills to session storage
+    sessionStorage.setItem('candidateSkills', JSON.stringify(selectedSkills));
+    
     // In a real app, you'd save this data to your backend
     console.log("Selected skills:", selectedSkills);
     router.push("/onboarding/candidate/preferences");
   };
+
+  if (isLoading) {
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <p>Loading your skills...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -91,16 +147,18 @@ export default function SkillsSelection() {
                 <div className="mt-4">
                   <h3 className="text-sm font-medium mb-2">Suggested Skills</h3>
                   <div className="flex flex-wrap gap-2">
-                    {suggestedSkills.map((skill) => (
-                      <Badge
-                        key={skill}
-                        variant="outline"
-                        className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
-                        onClick={() => handleAddSkill(skill)}
-                      >
-                        {skill}
-                      </Badge>
-                    ))}
+                    {suggestedSkills
+                      .filter(skill => !selectedSkills.includes(skill))
+                      .map((skill) => (
+                        <Badge
+                          key={skill}
+                          variant="outline"
+                          className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+                          onClick={() => handleAddSkill(skill)}
+                        >
+                          {skill}
+                        </Badge>
+                      ))}
                   </div>
                 </div>
               </div>
