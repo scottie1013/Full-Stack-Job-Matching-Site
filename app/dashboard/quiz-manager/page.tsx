@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { QuizResponses } from "@/components/quiz-responses"
+import { QuizResponses } from "../../components/quiz-responses"
 import {
   Plus,
   Edit,
@@ -72,27 +72,27 @@ const sampleResponses = [
       {
         question: "Which cloud technology are you most experienced with?",
         answer: "AWS",
-        type: "multiple-choice"
+        type: "multiple-choice" as const
       },
       {
         question: "Which programming language do you prefer for cloud infrastructure?",
         answer: "Python",
-        type: "multiple-choice"
+        type: "multiple-choice" as const
       },
       {
         question: "Describe a challenging cloud infrastructure problem you've solved",
         answer: "I recently implemented a multi-region architecture that improved our disaster recovery capabilities. The challenge was maintaining data consistency across regions while minimizing latency. I designed a solution using DynamoDB global tables with custom conflict resolution logic.",
-        type: "text"
+        type: "text" as const
       },
       {
         question: "What's your experience level with MLOps?",
         answer: "Intermediate",
-        type: "multiple-choice"
+        type: "multiple-choice" as const
       },
       {
         question: "What interests you most about working at Microsoft?",
         answer: "I'm particularly interested in Microsoft's cloud infrastructure work and the opportunity to impact products that millions of people use daily. I'm also drawn to the company's commitment to AI ethics and responsible innovation.",
-        type: "text"
+        type: "text" as const
       },
     ]
   },
@@ -105,27 +105,27 @@ const sampleResponses = [
       {
         question: "Which cloud technology are you most experienced with?",
         answer: "Azure",
-        type: "multiple-choice"
+        type: "multiple-choice" as const
       },
       {
         question: "Which programming language do you prefer for cloud infrastructure?",
         answer: "JavaScript/TypeScript",
-        type: "multiple-choice"
+        type: "multiple-choice" as const
       },
       {
         question: "Describe a challenging cloud infrastructure problem you've solved",
         answer: "I led a project to optimize our CI/CD pipeline that was taking over 45 minutes to complete. By implementing parallel testing, caching strategies, and optimizing Docker builds, I reduced the pipeline time to under 10 minutes, which dramatically improved developer productivity.",
-        type: "text"
+        type: "text" as const
       },
       {
         question: "What's your experience level with MLOps?",
         answer: "Beginner",
-        type: "multiple-choice"
+        type: "multiple-choice" as const
       },
       {
         question: "What interests you most about working at Microsoft?",
         answer: "I'm excited about Microsoft's focus on developer tools and productivity. As someone who has used VS Code and GitHub extensively, I'd love to contribute to these platforms and help shape the future of developer experience.",
-        type: "text"
+        type: "text" as const
       },
     ]
   },
